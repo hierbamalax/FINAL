@@ -1,7 +1,6 @@
 package ec.webmarket.restful.domain;
 
 import java.time.LocalDate;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,4 +32,8 @@ public class Paciente {
 
     @Column(name = "direccion", nullable = false)
     private String direccion;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 }
