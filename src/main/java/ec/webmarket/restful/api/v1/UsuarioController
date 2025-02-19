@@ -1,0 +1,40 @@
+package ec.webmarket.restful.api.v1;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ec.webmarket.restful.dto.v1.UsuarioDTO;
+import ec.webmarket.restful.security.ApiResponseDTO;
+import ec.webmarket.restful.service.crud.UsuarioService;
+
+@RestController
+@RequestMapping("/api/v1/usuarios")
+public class UsuarioController {
+
+    private final UsuarioService service;
+
+    public UsuarioController(UsuarioService service) {
+        this.service = service;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UsuarioDTO dto) {
+        return new ResponseEntity<>(new ApiResponseDTO<>(true, service.register(dto)), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> authenticate(@RequestParam String username, @RequestParam String password) {
+        boolean isAuthenticated = service.authenticate(username, password);
+        if (isAuthenticated) {
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Autenticación exitosa"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDTO<>(false, "Credenciales incorrectas"));
+        }
+    }
+
+    @PutMapping("/{id}/update-password")
+    public ResponseEntity<?> updatePassword(@PathVariable Long id, @RequestParam String newPassword) {
+        service.updatePassword(id, newPassword);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Contraseña actualizada correctamente"));
+    }
+}
